@@ -1,0 +1,9 @@
+Home:
+  api: http://localhost:8080
+  method: GET
+  expected: {"message":"Hello, World!","status":true}
+
+ListPosts:
+  api: http://localhost:8080/posts
+  method: GET
+  expected: {}
