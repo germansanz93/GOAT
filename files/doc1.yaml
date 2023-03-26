@@ -1,9 +1,9 @@
 Home:
-  api: http://localhost:8080
+  api: http://google.com
   method: GET
   expected: {"message":"Hello, World!","status":true}
 
 ListPosts:
-  api: http://localhost:8080/posts
+  api: http://facebook.com
   method: GET
   expected: {}
