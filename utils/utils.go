@@ -2,12 +2,8 @@ package utils
 
 import (
 	"log"
+	"net/http"
 )
-
-const GET = "GET"
-const POST = "POST"
-const PUT = "PUT"
-const DELETE = "DELETE"
 
 type ApiTest struct {
 	Api      string
@@ -23,22 +19,9 @@ func Greet(p string) {
 	log.Printf("Scanning for YAML documents in filesPath: %s\n", p)
 }
 
-func SelectStrategy(m string) TestCall {
-	switch m {
-	case GET:
-		return GetStrategy{}
-	case POST:
-		log.Println("POST")
-		return nil
-	case PUT:
-		log.Println("PUT")
-		return nil
-	case DELETE:
-		log.Println("DELETE")
-		return nil
-	default:
-		log.Println("MISSING METHOD")
-		return nil
+func AddHeaders(r *http.Request, h map[string]interface{}) {
+	for k, v := range h {
+		r.Header.Add(k, v.(string))
 	}
 }
 

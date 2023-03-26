@@ -4,6 +4,7 @@ import (
 	u "germansanz93/goat/utils"
 	"io/ioutil"
 	"log"
+	"net/http"
 
 	"gopkg.in/yaml.v3"
 )
@@ -20,6 +21,8 @@ func main() {
 
 	//Greet
 	u.Greet(settings.filesPath)
+
+	var client *http.Client = http.DefaultClient
 
 	//Getting files
 	files, err := ioutil.ReadDir("./files/")
@@ -44,8 +47,9 @@ func main() {
 			if err != nil {
 				log.Println("Error creating test")
 			}
-			st := u.SelectStrategy(at.Method)
-			r, err := st.Call(at)
+			req, err := http.NewRequest(at.Method, at.Api, nil)
+			u.AddHeaders(req, at.Headers)
+			r, err := client.Do(req)
 			if err != nil {
 				log.Println("Error calling api: ", at.Api, err)
 			} else {
