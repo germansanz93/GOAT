@@ -1,10 +1,10 @@
 package main
 
 import (
+	u "germansanz93/goat/utils"
 	"io"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -14,32 +14,8 @@ type Settings struct {
 	filesPath string `yaml:"filesPath"`
 }
 
-type ApiTest struct {
-	api      string
-	method   string
-	expected map[string]interface{}
-}
-
 var settings = Settings{ //TODO hacer esto configurable con un archivo settings.yaml
 	filesPath: "./files/",
-}
-
-func makeTest(test map[string]interface{}) (ApiTest, error) {
-	expected, ok := test["expected"].(map[string]interface{})
-	if !ok {
-		log.Fatal("Erorr reading test!")
-	}
-	if len(expected) == 0 {
-		log.Println("No expected values, setting default assertion codes 200, 204")
-		expected["code"] = []string{"200", "204"}
-	}
-	log.Println(expected)
-	at := ApiTest{
-		api:      test["api"].(string),
-		expected: expected,
-		method:   test["method"].(string),
-	}
-	return at, nil
 }
 
 func main() {
@@ -68,13 +44,14 @@ func main() {
 		err = yaml.Unmarshal(yamlFile, data)
 		for endpoint := range data {
 			test := data[endpoint].(map[string]interface{})
-			at, err := makeTest(test)
+			at, err := u.MakeTest(test)
 			if err != nil {
 				log.Println("Error creating test")
 			}
-			response, err := http.Get(at.api)
+			st := u.SelectStrategy(at)
+			response, err := st.Call(at)
 			if err != nil {
-				log.Println("Error calling api: ", at.api, err)
+				log.Println("Error calling api: ", at.Api, err)
 			} else {
 				io.Copy(os.Stdout, response.Body)
 			}
