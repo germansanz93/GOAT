@@ -2,10 +2,8 @@ package main
 
 import (
 	u "germansanz93/goat/utils"
-	"io"
 	"io/ioutil"
 	"log"
-	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -21,9 +19,7 @@ var settings = Settings{ //TODO hacer esto configurable con un archivo settings.
 func main() {
 
 	//Greet
-	log.Println("GOAT")
-	log.Println("---GOlang Api Tester---")
-	log.Printf("Scanning for YAML documents in filesPath: %s\n", settings.filesPath)
+	u.Greet(settings.filesPath)
 
 	//Getting files
 	files, err := ioutil.ReadDir("./files/")
@@ -32,28 +28,29 @@ func main() {
 	}
 
 	//Reading each file
-	for _, file := range files {
+	for _, f := range files {
 		//read file
-		yamlFile, err := ioutil.ReadFile(settings.filesPath + file.Name())
+		yf, err := ioutil.ReadFile(settings.filesPath + f.Name())
 		if err != nil {
-			log.Printf("Skipping file: %s because error: %s\n", file.Name(), err)
+			log.Printf("Skipping file: %s because error: %s\n", f.Name(), err)
 		}
 
 		//parse file data to map
 		data := make(map[string]interface{})
-		err = yaml.Unmarshal(yamlFile, data)
-		for endpoint := range data {
-			test := data[endpoint].(map[string]interface{})
-			at, err := u.MakeTest(test)
+		err = yaml.Unmarshal(yf, data)
+		for e := range data {
+			t := data[e].(map[string]interface{})
+			at, err := u.MakeTest(t)
 			if err != nil {
 				log.Println("Error creating test")
 			}
-			st := u.SelectStrategy(at)
-			response, err := st.Call(at)
+			st := u.SelectStrategy(at.Method)
+			r, err := st.Call(at)
 			if err != nil {
 				log.Println("Error calling api: ", at.Api, err)
 			} else {
-				io.Copy(os.Stdout, response.Body)
+				// io.Copy(os.Stdout, r.Body)
+				log.Printf("api: %s, status: %d", at.Api, r.StatusCode)
 			}
 			log.Println(at)
 		}
