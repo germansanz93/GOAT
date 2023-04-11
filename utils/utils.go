@@ -1,9 +1,13 @@
 package utils
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 )
+
+const INVALID_STATUS_CODE_ERROR = "Invalid statusCode, expected %v, got %v\n"
 
 type ApiTest struct {
 	Api      string
@@ -46,4 +50,29 @@ func MakeTest(t map[string]interface{}) (ApiTest, error) {
 		Method:   t["method"].(string),
 	}
 	return at, nil
+}
+
+func RunTest(at ApiTest, c *http.Client) (bool, error) {
+	req, err := http.NewRequest(at.Method, at.Api, nil)
+	AddHeaders(req, at.Headers)
+	r, err := c.Do(req)
+	if err != nil {
+		log.Println("Error calling api: ", at.Api, err)
+		return false, err
+	}
+	passed, err := executeAsserts(r, at)
+	if err != nil {
+		return false, err
+	}
+	if passed {
+		return true, nil
+	}
+	return false, nil
+}
+
+func executeAsserts(r *http.Response, at ApiTest) (bool, error) {
+	if at.Expected["statusCode"] != r.StatusCode {
+		return false, errors.New(fmt.Sprintf(INVALID_STATUS_CODE_ERROR, r.StatusCode, at.Expected["statusCode"]))
+	}
+	return true, nil
 }

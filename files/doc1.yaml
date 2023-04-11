@@ -5,4 +5,4 @@ Home:
     Content-type: Application/json
   expected: 
     message: "Hello, World!"
-    status: true
+    statusCode: 200

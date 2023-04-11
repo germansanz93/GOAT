@@ -22,6 +22,7 @@ func main() {
 	//Greet
 	u.Greet(settings.filesPath)
 
+	//Set client for http calls
 	var client *http.Client = http.DefaultClient
 
 	//Getting files
@@ -47,16 +48,13 @@ func main() {
 			if err != nil {
 				log.Println("Error creating test")
 			}
-			req, err := http.NewRequest(at.Method, at.Api, nil)
-			u.AddHeaders(req, at.Headers)
-			r, err := client.Do(req)
+			passed, err := u.RunTest(at, client)
 			if err != nil {
-				log.Println("Error calling api: ", at.Api, err)
-			} else {
-				// io.Copy(os.Stdout, r.Body)
-				log.Printf("api: %s, status: %d", at.Api, r.StatusCode)
+				log.Println(err)
 			}
-			log.Println(at)
+			if passed {
+				log.Println("All tests passed succesfully")
+			}
 		}
 	}
 }
