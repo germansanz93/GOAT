@@ -3,8 +3,11 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+
+	"gopkg.in/yaml.v3"
 )
 
 const INVALID_STATUS_CODE_ERROR = "Invalid statusCode, expected %v, got %v\n"
@@ -21,6 +24,34 @@ func Greet(p string) {
 	log.Println("GOAT")
 	log.Println("---GOlang Api Tester---")
 	log.Printf("Scanning for YAML documents in filesPath: %s\n", p)
+}
+
+func ReadTests(fp string) []ApiTest {
+	var tests []ApiTest
+	//Getting files
+	files, err := ioutil.ReadDir("./files/")
+	if err != nil {
+		log.Fatal("Unexpected error: ", err)
+	}
+	for _, f := range files {
+		//read file
+		yf, err := ioutil.ReadFile(fp + f.Name())
+		if err != nil {
+			log.Printf("Skipping file: %s because error: %s\n", f.Name(), err)
+		}
+		//parse file data to map
+		data := make(map[string]interface{})
+		err = yaml.Unmarshal(yf, data)
+		for e := range data {
+			t := data[e].(map[string]interface{})
+			at, err := MakeTest(t)
+			if err != nil {
+				log.Println("Error creating test")
+			}
+			tests = append(tests, at)
+		}
+	}
+	return tests
 }
 
 func AddHeaders(r *http.Request, h map[string]interface{}) {
@@ -65,6 +96,7 @@ func RunTest(at ApiTest, c *http.Client) (bool, error) {
 		return false, err
 	}
 	if passed {
+		log.Printf("test %s passed\n", at.Api)
 		return true, nil
 	}
 	return false, nil

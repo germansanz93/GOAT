@@ -1,5 +1,14 @@
-Home:
+Google:
   api: http://google.com
+  method: GET
+  headers:
+    Content-type: Application/json
+  expected: 
+    message: "Hello, World!"
+    statusCode: 200
+
+Amazon:
+  api: http://amazon.com
   method: GET
   headers:
     Content-type: Application/json
