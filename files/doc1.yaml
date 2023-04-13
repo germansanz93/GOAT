@@ -1,17 +1,40 @@
-Google:
-  api: http://google.com
-  method: GET
-  headers:
-    Content-type: Application/json
-  expected: 
-    message: "Hello, World!"
-    statusCode: 200
+# Google:
+#   api: http://google.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200, 204]
 
-Amazon:
-  api: http://amazon.com
+# Amazon:
+#   api: http://amazon.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200]
+
+# Facebook:
+#   api: http://facebook.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected:
+#     statusCodes: [200]
+
+Home:
+  api: http://localhost
   method: GET
   headers:
     Content-type: Application/json
   expected: 
-    message: "Hello, World!"
-    statusCode: 200
+    body: {"mesage": "Hello, World!"}
+    statusCodes: [200]
+
+# Twitter:
+#   api: http://twitter.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200]
