@@ -1,9 +1,40 @@
-Home:
-  api: http://google.com
-  method: GET
-  expected: {"message":"Hello, World!","status":true}
+# Google:
+#   api: http://google.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200, 204]
 
-ListPosts:
-  api: http://facebook.com
+# Amazon:
+#   api: http://amazon.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200]
+
+# Facebook:
+#   api: http://facebook.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected:
+#     statusCodes: [200]
+
+Home:
+  api: http://localhost
   method: GET
-  expected: {}
+  headers:
+    Content-type: Application/json
+  expected: 
+    body: {"mesage": "Hello, World!"}
+    statusCodes: [200]
+
+# Twitter:
+#   api: http://twitter.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200]
