@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	u "germansanz93/goat/utils"
-	"net/http"
 	"runtime/pprof"
 )
 
@@ -19,24 +17,27 @@ var threadProfie = pprof.Lookup("threadcreate")
 func main() {
 
 	//Greet
-	u.Greet(settings.filesPath)
+	// u.Greet(settings.filesPath)
 
 	// fmt.Println(runtime.NumCPU())
 	// fmt.Println(threadProfie.Count())
 
-	ch := make(chan string)
+	// ch := make(chan string)
 
 	//Set client for http calls
-	var client *http.Client = http.DefaultClient
+	// var client *http.Client = http.DefaultClient
 
-	tests := u.ReadTests(settings.filesPath)
+	// tests := u.ReadTests(settings.filesPath)
 
-	for _, at := range tests {
-		go u.RunTest(at, client, ch)
-	}
+	// log.Println(tests)
+	u.ReadTests(settings.filesPath)
 
-	for i := 0; i < len(tests); i++ {
-		fmt.Println(<-ch)
-	}
+	// for _, at := range tests {
+	// 	go u.RunTest(at, client, ch)
+	// }
+
+	// for i := 0; i < len(tests); i++ {
+	// 	fmt.Println(<-ch)
+	// }
 
 }
