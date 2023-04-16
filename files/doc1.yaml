@@ -1,0 +1,70 @@
+# Google:
+#   api: http://google.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200, 204]
+
+# Amazon:
+#   api: http://amazon.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200]
+
+# Facebook:
+#   api: http://facebook.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected:
+#     statusCodes: [200]
+
+
+Test1:
+  vars: ["$test1", "$test2"]
+  api1: 
+    url: https://643c36e770ea0e6602a41476.mockapi.io/api/test/test1/1
+    method: GET
+    headers:
+      Content-type: Application/json
+    expected: 
+      body: 
+        "test": "test 1"
+        "id": "1"
+      statusCodes: [200]
+    set:
+      "$test1": "test"
+  api2: 
+    url: https://643c36e770ea0e6602a41476.mockapi.io/api/test/test1/2
+    method: GET
+    headers:
+      Content-type: Application/json
+    expected: 
+      body: {"mesage": "Hello, World!"}
+      statusCodes: [200]
+
+# Test2:
+#   global: ["$test1", "$test2"]
+#   api1: 
+#     url: https://643c36e770ea0e6602a41476.mockapi.io/api/test/test1/1
+#     method: GET
+#     headers:
+#       Content-type: Application/json
+#     expected: 
+#       body: 
+#         "test": "test 1"
+#         "id": "1"
+#       statusCodes: [200]
+#     set:
+#       "$test1": "test"
+
+# Twitter:
+#   api: http://twitter.com
+#   method: GET
+#   headers:
+#     Content-type: Application/json
+#   expected: 
+#     statusCodes: [200]
