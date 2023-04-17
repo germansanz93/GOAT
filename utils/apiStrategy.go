@@ -1,25 +1,26 @@
 package utils
 
-import "log"
-
 const URL string = "url"
 const METHOD string = "method"
+const HEADERS string = "headers"
+const EXPECTED_BODY string = "body"
 
 type ApiStrategy struct{}
 
 func (a *ApiStrategy) Add(key string, d myMap, ft *FullTest) {
 	at := ApiTest{
-		Name:   key,
-		Url:    getStrValue(key, URL, d),
-		Method: getStrValue(key, METHOD, d),
-		//TODO crear metodo getHeaders y los metodos que faltan para completar la creacion completa del apitest
+		Name:     key,
+		Url:      d.getStrValue(key, URL),
+		Method:   d.getStrValue(key, METHOD),
+		Headers:  d.getMapStrValues(key, HEADERS),
+		Expected: getExpected(d.get(key)),
+		//TODO Falta trabajar el caso de los puts o los posts, donde necesitamos enviar un body
 	}
 
 	ft.Apis = append(ft.Apis, &at)
 
 }
 
-func getStrValue(key string, val string, m myMap) string {
-	log.Printf("getStrValue: %s %s", val, m.get(key)[val])
-	return m.get(key)[val].(string)
+func getExpected(m myMap) Expected {
+	return Expected{} // TODO completar esta funcion
 }

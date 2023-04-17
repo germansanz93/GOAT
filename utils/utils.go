@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"time"
@@ -100,8 +101,8 @@ func getStrategy(k string) KeyStrategy {
 }
 
 // Get inner map
-func (m myMap) get(k string) myMap {
-	return m[k].(myMap)
+func (m *myMap) get(k string) myMap {
+	return (*m)[k].(myMap)
 }
 
 // Get keys in a map
@@ -113,6 +114,23 @@ func getKeys(m myMap) []string {
 		i += 1
 	}
 	return keys
+}
+
+// Get String values in a map
+func (m *myMap) getStrValue(key string, val string) string {
+	log.Printf("getStrValue: %s %s", val, (m.get(key))[val])
+	return (m.get(key))[val].(string)
+}
+
+// Get Map values in a map
+func (m *myMap) getMapStrValues(key string, val string) map[string]string {
+	input := (m.get(key))[val].(myMap)
+	result := make(map[string]string, len(input))
+	for k, v := range input {
+		result[k] = fmt.Sprint(v)
+	}
+	log.Printf("getMapValues %s %s", val, result)
+	return result
 }
 
 // func ReadTests(fp string) []ApiTest {

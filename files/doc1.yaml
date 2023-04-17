@@ -43,7 +43,8 @@ Test1:
     headers:
       Content-type: Application/json
     expected: 
-      body: {"mesage": "Hello, World!"}
+      body: 
+        "mesage": "Hello, World!"
       statusCodes: [200]
 
 # Test2:
