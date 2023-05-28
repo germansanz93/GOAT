@@ -1,8 +1,11 @@
 package main
 
 import (
+	"flag"
 	u "germansanz93/goat/utils"
 	"runtime/pprof"
+
+	glog "github.com/magicsong/color-glog"
 )
 
 type Settings struct {
@@ -15,9 +18,9 @@ var settings = Settings{ //TODO hacer esto configurable con un archivo settings.
 var threadProfie = pprof.Lookup("threadcreate")
 
 func main() {
-
+	flag.Parse()
 	//Greet
-	// u.Greet(settings.filesPath)
+	u.Greet(settings.filesPath)
 
 	// fmt.Println(runtime.NumCPU())
 	// fmt.Println(threadProfie.Count())
@@ -30,8 +33,9 @@ func main() {
 	// tests := u.ReadTests(settings.filesPath)
 
 	// log.Println(tests)
-	u.ReadTests(settings.filesPath)
-
+	glog.Info("Starting Suite Creation...")
+	suite := u.ReadTests(settings.filesPath)
+	glog.Info(suite.End)
 	// for _, at := range tests {
 	// 	go u.RunTest(at, client, ch)
 	// }

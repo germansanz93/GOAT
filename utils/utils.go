@@ -3,9 +3,9 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"time"
 
+	glog "github.com/magicsong/color-glog"
 	"gopkg.in/yaml.v3"
 )
 
@@ -23,6 +23,7 @@ type Expected struct {
 
 type Suite struct {
 	Start time.Time
+	End   time.Time
 	Files []*File
 }
 
@@ -47,27 +48,29 @@ type ApiTest struct {
 }
 
 func Greet(p string) {
-	log.Println("GOAT")
-	log.Println("---GOlang Api Tester---")
-	log.Printf("Scanning for YAML documents in filesPath: %s\n", p)
+	glog.Info("GOAT")
+	glog.Info("---GOlang Api Tester---")
+	glog.Info("Scanning for YAML documents in filesPath: ", p)
 }
 
-func ReadTests(fp string) {
+func ReadTests(fp string) *Suite {
 	//Initialize Suite
 	s := Suite{
 		Start: time.Now(),
 	}
+	glog.Info("Starting time: ", s.Start)
 	//Getting files
 	files, err := ioutil.ReadDir("./files/")
 	if err != nil {
-		log.Fatal("Unexpected error: ", err)
+		glog.Fatal("Unexpected error: ", err)
 	}
 	//Iterate over each file
-	for _, f := range files {
+	for i, f := range files {
+		glog.Info("reading file: ", i)
 		//Read file
 		yf, err := ioutil.ReadFile(fp + f.Name())
 		if err != nil {
-			log.Printf("Skipping file: %s because error: %s\n", f.Name(), err)
+			glog.Warning("Skipping file: %s because error: %s\n", f.Name(), err)
 		}
 		file := &File{FileName: f.Name()}
 		s.Files = append(s.Files, file)
@@ -76,26 +79,29 @@ func ReadTests(fp string) {
 		err = yaml.Unmarshal(yf, data)
 		//For each test in yaml file get content
 		for e := range data {
+			glog.Info("Creating fulltest for file ", i)
 			ft := &FullTest{}
 			ft.Name = e
 			keys := getKeys(data.get(e))
 			for _, k := range keys {
 				getStrategy(k).Add(k, data.get(e), ft)
 			}
-			log.Println(ft, "utils 84")
-
-			// file.Tests = append(file.Tests, test) //TODO.. Aca lo que hay que hacer realmente es ver si es test o vars. Si es var ir a la strategia de vars pasando como arg tamb el valor, para que se lo agregue. Si es api a la strategia de api
+			file.Tests = append(file.Tests, ft)
+			glog.Info(ft)
 		}
+		glog.Info(file)
 	}
+	glog.Info(s)
+	return &s
 }
 
 func getStrategy(k string) KeyStrategy {
 	switch k {
 	case VARS:
-		log.Printf("Var strategy selected: %s", k)
+		glog.Info("Var strategy selected: ", k)
 		return &VarStrategy{}
 	default:
-		log.Printf("Api strategy selected: %s", k)
+		glog.Info("Api strategy selected: ", k)
 		return &ApiStrategy{}
 	}
 }
@@ -118,7 +124,7 @@ func getKeys(m myMap) []string {
 
 // Get String values in a map
 func (m *myMap) getStrValue(key string, val string) string {
-	log.Printf("getStrValue: %s %s", val, (m.get(key))[val])
+	// log.Printf("getStrValue: %s %s", val, (m.get(key))[val])
 	return (m.get(key))[val].(string)
 }
 
@@ -129,7 +135,7 @@ func (m *myMap) getMapStrValues(key string, val string) map[string]string {
 	for k, v := range input {
 		result[k] = fmt.Sprint(v)
 	}
-	log.Printf("getMapValues %s %s", val, result)
+	// log.Printf("getMapValues %s %s", val, result)
 	return result
 }
 

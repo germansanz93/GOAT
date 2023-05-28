@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"log"
 )
 
 type VarStrategy struct{}
@@ -14,7 +13,6 @@ func (v *VarStrategy) Add(key string, d myMap, ft *FullTest) {
 		m[fmt.Sprint(v)] = ""
 	}
 	ft.Vars = &m
-	log.Println(ft)
 }
 
 func getVars(k string, m myMap) []string {
