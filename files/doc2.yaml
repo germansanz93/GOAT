@@ -1,0 +1,8 @@
+Twitter:
+  api: 
+    url: http://twitter.com
+    method: GET
+    headers:
+      Content-type: Application/json
+    expected: 
+      statusCodes: [200]
