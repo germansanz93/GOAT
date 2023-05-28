@@ -3,9 +3,12 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"time"
 
 	glog "github.com/magicsong/color-glog"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 )
 
@@ -167,11 +170,11 @@ func (m *myMap) getMapStrValues(key string, val string) map[string]string {
 // 	return tests
 // }
 
-// func AddHeaders(r *http.Request, h map[string]interface{}) {
-// 	for k, v := range h {
-// 		r.Header.Add(k, v.(string))
-// 	}
-// }
+func AddHeaders(r *http.Request, h map[string]string) {
+	for k, v := range h {
+		r.Header.Add(k, v)
+	}
+}
 
 // func MakeTest(t map[string]interface{}) (ApiTest, error) {
 // 	log.Println(t)
@@ -197,23 +200,23 @@ func (m *myMap) getMapStrValues(key string, val string) map[string]string {
 // 	return at, nil
 // }
 
-// func RunTest(at ApiTest, c *http.Client, ch chan string) {
-// 	req, err := http.NewRequest(at.Method, at.Api, nil)
-// 	AddHeaders(req, at.Headers)
-// 	r, err := c.Do(req)
-// 	if err != nil {
-// 		log.Println("Error calling api: ", at.Api, err)
-// 		ch <- fmt.Sprintf("test %s failed! %s", at.Api, at.Expected.Body)
-// 	}
-// 	passed, err := executeAsserts(r, at)
-// 	if err != nil {
-// 		ch <- fmt.Sprintf("test %s failed!", at.Api)
-// 	}
-// 	if passed {
-// 		msg := fmt.Sprintf("test %s passed\n", at.Api)
-// 		ch <- msg
-// 	}
-// }
+func RunTest(at ApiTest, c *http.Client, ch chan string) {
+	req, err := http.NewRequest(at.Method, at.Url, nil)
+	AddHeaders(req, at.Headers)
+	r, err := c.Do(req)
+	if err != nil {
+		log.Println("Error calling api: ", at.Url, err)
+		ch <- fmt.Sprintf("test %s failed! %s", at.Url, at.Expected.Body)
+	}
+	passed, err := executeAsserts(r, at)
+	if err != nil {
+		ch <- fmt.Sprintf("test %s failed!", at.Url)
+	}
+	if passed {
+		msg := fmt.Sprintf("test %s passed\n", at.Url)
+		ch <- msg
+	}
+}
 
 // func getExpected(e map[string]interface{}) expected {
 // 	sc := []uint8{}
@@ -235,12 +238,12 @@ func (m *myMap) getMapStrValues(key string, val string) map[string]string {
 // 	return ex
 // }
 
-// func executeAsserts(r *http.Response, at ApiTest) (bool, error) {
-// 	api := at.Api
-// 	result := "failed"
-// 	if slices.Contains(at.Expected.StatusCodes, uint8(r.StatusCode)) {
-// 		result = "passed"
-// 	}
-// 	log.Printf("statusCode assertion for %s %s, expected: %v, got: %v", api, result, at.Expected.StatusCodes, r.StatusCode)
-// 	return true, nil
-// }
+func executeAsserts(r *http.Response, at ApiTest) (bool, error) {
+	api := at.Url
+	result := "failed"
+	if slices.Contains(at.Expected.StatusCodes, uint8(r.StatusCode)) {
+		result = "passed"
+	}
+	log.Printf("statusCode assertion for %s %s, expected: %v, got: %v", api, result, at.Expected.StatusCodes, r.StatusCode)
+	return true, nil
+}
